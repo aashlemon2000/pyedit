@@ -19,19 +19,38 @@ def make(userinputg):
   os.system("clear")
   mydict = {}
 
+  location = ""
   running = True
 
   while running:
+    print(location)
     userinput = input().split()
     
     if userinput[0] == "create" or userinput[0] == "edit":
-      mydict[userinput[1]] = listtostr(userinput[2:])
+      if location != "":
+        mydict[location.split("{")[-1]][userinput[1]] = listtostr(userinput[2:])
+      else:
+        mydict[userinput[1]] = listtostr(userinput[2:])
+    elif userinput[0] == "create-dict":
+      if location != "":
+        currentlocation = location.split("{")
+        for x in currentlocation:
+          if x == "":
+            currentlocation.remove(x)
+        mydict[currentlocation[-1]][listtostr(userinput[1:])] = {}
+      else:
+        mydict[userinput[1]] = {}
+      
+      location = location + userinput[1] + "{"
     elif userinput[0] == "remove":
-      mydict[userinput[1]].pop()
-    elif userinput[0] == "end":
-      running = False
+      if location != "":
+        mydict[location.split("{")[-1]][userinput[1]].pop()
+      else:
+        mydict[userinput[1]].pop()
     elif userinput[0] == "show-all":
       print(mydict)
+    elif userinput[0] == "end":
+      running = False
 
     os.system("clear")
   
@@ -39,4 +58,7 @@ def make(userinputg):
   f.close()
 
 if userinput[0] == "make":
-  make(userinput)
+  try:
+    make(userinput)
+  except:
+    print("An error has happened. Please try again.")
