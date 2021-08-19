@@ -15,7 +15,7 @@ def listtostr(list, addspace=True):
   return mystr
 
 def make(userinputg):
-  f = open(listtostr(userinputg[1:]), "x")
+  f = open(listtostr(userinputg[1:]), "w")
   os.system("clear")
   mydict = {}
 
@@ -23,32 +23,45 @@ def make(userinputg):
   running = True
 
   while running:
-    print(location)
+    currentlocation = location.split("/")
+    for x in currentlocation:
+      if x == "":
+        currentlocation.remove(x)
+
+    print(location, "\n", mydict)
     userinput = input().split()
     
     if userinput[0] == "create" or userinput[0] == "edit":
       if location != "":
-        mydict[location.split("{")[-1]][userinput[1]] = listtostr(userinput[2:])
+        if not currentlocation[-1] == "$array"
+          mydict[currentlocation[-1]][userinput[1]] = listtostr(userinput[2:])
+        else:
+          thislist = currentlocation.reverse()
+          for x in thislist:
+            
       else:
         mydict[userinput[1]] = listtostr(userinput[2:])
-    elif userinput[0] == "create-dict":
+    elif userinput[0] == "create-array":
+      withinarray = None
+
       if location != "":
-        currentlocation = location.split("{")
-        for x in currentlocation:
-          if x == "":
-            currentlocation.remove(x)
-        mydict[currentlocation[-1]][listtostr(userinput[1:])] = {}
+        try:
+          mydict[currentlocation[-1]][listtostr(userinput[1:])] = []
+        except:
+          mydict[currentlocation[-1]][userinput[1]] = []
+          withinarray = True
       else:
-        mydict[userinput[1]] = {}
+        mydict[userinput[1]] = []
       
-      location = location + userinput[1] + "{"
+      if not withinarray:
+        location = location + userinput[1] + "/"
+      elif withinarray:
+        location = location + "$array/"
     elif userinput[0] == "remove":
       if location != "":
-        mydict[location.split("{")[-1]][userinput[1]].pop()
+        mydict[currentlocation[-1]][userinput[1]].pop()
       else:
         mydict[userinput[1]].pop()
-    elif userinput[0] == "show-all":
-      print(mydict)
     elif userinput[0] == "end":
       running = False
 
@@ -58,7 +71,4 @@ def make(userinputg):
   f.close()
 
 if userinput[0] == "make":
-  try:
-    make(userinput)
-  except:
-    print("An error has happened. Please try again.")
+  make(userinput)
